@@ -14,16 +14,21 @@ export class AuthGuard implements CanActivate //Su dung cho login
         const req = context.switchToHttp().getRequest() 
         const ans = this.getRequestBody(req) 
         if (ans == null) 
-            throw new UnauthorizedException("Fucking login") 
+            throw new UnauthorizedException("Information is invalid") 
         try 
         {
             const {email , password} = ans 
             //Tim kiem nguoi dung trong he thong 
-            req.user.email = email 
-            req.user.password = password
+            
+            const user = await this.prismaService.user.findUnique({
+                where: {email}
+            })
+            if (!user) 
+                throw new UnauthorizedException("User not verified")
+            req.user = {email , password}
         } 
         catch {
-            throw new UnauthorizedException("Fucking login")
+            throw new UnauthorizedException("User not verified")
         } 
         return true 
     } 

@@ -2,6 +2,7 @@ import { CanActivate , ExecutionContext, Injectable, UnauthorizedException } fro
 import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { Request } from "express";
+import { UserService } from "src/modules/user/user.service";
 //Ham dung de verify token cua nguoi dung 
 @Injectable() 
 export class JwtGuard implements CanActivate
@@ -17,9 +18,12 @@ export class JwtGuard implements CanActivate
         try 
         {
             const payload = await this.jwtService.verifyAsync(token) 
-            req['user'] = payload 
-            
-        }  
+            //Kiem tra them user co hop le khong ? 
+            //Kiem tra token gui len co hop le khong va user co hop le khong ? 
+            const id = payload.userID 
+            //Viec kiem tra tinh trang user / user co ton tai trong he thong khong se do ai quan li ? 
+            req['user'] = payload   
+        } 
         catch 
         {
             throw new UnauthorizedException("Fucking")
