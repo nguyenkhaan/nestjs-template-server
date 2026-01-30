@@ -1,0 +1,9 @@
+model UserRole {
+    id     Int  @id @default(autoincrement())
+    user   User @relation(fields: [userID], references: [id])
+    userID Int
+    role   Role @relation(fields: [roleID], references: [id])
+    roleID Int
+
+    @@unique([userID, roleID]) //Them cai nay de danh cho nhanh 
+}

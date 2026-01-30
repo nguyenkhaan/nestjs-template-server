@@ -1,0 +1,70 @@
+enum SystemRole {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+model Bill {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  product   Product @relation(fields: [productID], references: [id])
+  productID Int
+  user      User    @relation(fields: [userID], references: [id])
+  userID    Int
+}
+
+model Product {
+  id    Int     @id @default(autoincrement())
+  name  String  @default("")
+  price Decimal @default(0)
+  bill  Bill[]
+}
+
+model Role {
+  id        Int        @id @default(autoincrement())
+  name      String     @default("Admin")
+  userRoles UserRole[]
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String     @default("")
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  verify    Boolean    @default(false)
+  roles     UserRole[]
+  bill      Bill[]
+
+  @@index([email, verify]) //Danh index de tang toc do truy cap 
+  @@index([email])
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userID], references: [id])
+  userID Int
+  role   Role @relation(fields: [roleID], references: [id])
+  roleID Int
+
+  @@unique([userID, roleID]) //Them cai nay de danh cho nhanh 
+}
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}

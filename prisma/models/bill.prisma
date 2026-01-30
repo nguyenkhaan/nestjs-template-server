@@ -1,0 +1,8 @@
+model Bill {
+    id        Int     @id @default(autoincrement())
+    quantity  Int
+    product   Product @relation(fields: [productID], references: [id])
+    productID Int
+    user      User    @relation(fields: [userID], references: [id])
+    userID    Int
+}
